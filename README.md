@@ -25,11 +25,11 @@ Este é um projeto de backend desenvolvido como parte do desafio Flora. Ele util
 ### Passos para Instalação
 
 1. Clone o repositório:
-   ```sh
+  ```sh
    git clone https://github.com/seu-usuario/back-flora-challenge.git
    cd back-flora-challenge
 
-   ```
+  ```
 2. Instale as dependências:
   ```sh
     npm install
