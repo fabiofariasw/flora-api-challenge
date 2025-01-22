@@ -24,12 +24,12 @@ describe('Authenticate User', () => {
   })
 
   it('should be able to authenticate a user', async () => {
-    const users = makeUser({
+    const user = makeUser({
       email: 'johndoe@example.com',
       password: await fakeHasher.hash('123456'),
     })
 
-    inMemoryUsersRepository.items.push(users)
+    inMemoryUsersRepository.items.push(user)
 
     const result = await sut.execute({
       email: 'johndoe@example.com',

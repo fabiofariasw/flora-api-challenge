@@ -35,65 +35,45 @@ export class PrismaFavoriteWordsRepository implements FavoriteWordsRepository {
     userId: string,
     { page, limit, search }: PaginationParams,
   ): Promise<PaginationResponse<FavoriteWord[]>> {
-    const userFavoriteWords = await this.prisma.favoriteWord.findMany({
-      where: {
-        user_id: userId,
-      },
-      select: {
-        word_id: true,
-      },
-    })
-
-    const wordIds = userFavoriteWords.map(
-      (favoriteWord) => favoriteWord.word_id,
-    )
-
-    const filteredFavoriteWords = await this.prisma.word.findMany({
-      where: {
-        id: {
-          in: wordIds,
-        },
-        ...(search && {
-          name: {
-            contains: search,
-            mode: 'insensitive',
+    const [userFavoriteWords, total] = await Promise.all([
+      this.prisma.favoriteWord.findMany({
+        where: {
+          user_id: userId,
+          word: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
           },
-        }),
-      },
-      select: {
-        id: true,
-      },
-    })
-
-    const filteredFavoriteWordsIds = filteredFavoriteWords.map(
-      (word) => word.id,
-    )
-
-    const total = await this.prisma.favoriteWord.count({
-      where: {
-        user_id: userId,
-        word_id: {
-          in: filteredFavoriteWordsIds,
         },
-      },
-    })
-
-    const favoriteWords = await this.prisma.favoriteWord.findMany({
-      where: {
-        user_id: userId,
-        word_id: {
-          in: filteredFavoriteWordsIds,
+        select: {
+          user_id: true,
+          word: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          addedAt: true,
         },
-      },
-      include: {
-        word: true,
-      },
-      take: limit,
-      skip: (page - 1) * limit,
-    })
+        take: limit,
+        skip: (page - 1) * limit,
+      }),
+      this.prisma.favoriteWord.count({
+        where: {
+          user_id: userId,
+          word: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        },
+      }),
+    ])
 
     return {
-      data: favoriteWords.map(PrismaFavoriteWordMapper.toDomain),
+      data: userFavoriteWords.map(PrismaFavoriteWordMapper.toDomain),
       total,
     }
   }

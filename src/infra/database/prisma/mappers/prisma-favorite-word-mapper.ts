@@ -13,9 +13,13 @@ interface PrismaFavoriteWordProps {
 export class PrismaFavoriteWordMapper {
   static toDomain(raw: PrismaFavoriteWordProps) {
     return FavoriteWord.create({
-      wordId: raw.word.id,
-      word: raw.word.name,
       userId: raw.user_id,
+      // wordId: raw.word.id,
+      word: {
+        id: raw.word.id,
+        name: raw.word.name,
+      },
+      // word: raw.word.name,
       addedAt: raw.addedAt,
     })
   }

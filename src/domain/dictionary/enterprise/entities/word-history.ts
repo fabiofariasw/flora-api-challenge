@@ -2,9 +2,11 @@ import { Entity } from '@/core/entities/entity'
 
 export interface WordHistoryProps {
   userId: string
-  wordId: number
+  word: {
+    id: number
+    name: string
+  }
   addedAt: Date
-  word: string
 }
 
 export class WordHistory extends Entity<WordHistoryProps> {
@@ -12,16 +14,20 @@ export class WordHistory extends Entity<WordHistoryProps> {
     return this.props.userId
   }
 
-  get wordId() {
-    return this.props.wordId
-  }
-
-  get addedAt() {
-    return this.props.addedAt
+  get name() {
+    return this.props.word.name
   }
 
   get word() {
     return this.props.word
+  }
+
+  get wordId() {
+    return this.props.word.id
+  }
+
+  get addedAt() {
+    return this.props.addedAt
   }
 
   static create(props: WordHistoryProps) {

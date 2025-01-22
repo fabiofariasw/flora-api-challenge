@@ -14,61 +14,45 @@ export class PrismaWordHistoryRepository implements WordHistoryRepository {
     userId: string,
     { page, limit, search }: PaginationParams,
   ): Promise<PaginationResponse<WordHistory[]>> {
-    const userWordHistory = await this.prisma.history.findMany({
-      where: {
-        user_id: userId,
-      },
-      select: {
-        word_id: true,
-      },
-    })
-
-    const userWordIds = userWordHistory.map((history) => history.word_id)
-
-    const filteredWords = await this.prisma.word.findMany({
-      where: {
-        id: {
-          in: userWordIds,
-        },
-        ...(search && {
-          name: {
-            contains: search,
-            mode: 'insensitive',
+    const [userWordHistory, total] = await Promise.all([
+      this.prisma.history.findMany({
+        where: {
+          user_id: userId,
+          word: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
           },
-        }),
-      },
-      select: {
-        id: true,
-      },
-    })
-
-    const filteredWordIds = filteredWords.map((word) => word.id)
-
-    const total = await this.prisma.history.count({
-      where: {
-        user_id: userId,
-        word_id: {
-          in: filteredWordIds,
         },
-      },
-    })
-
-    const wordHistory = await this.prisma.history.findMany({
-      where: {
-        user_id: userId,
-        word_id: {
-          in: filteredWordIds,
+        select: {
+          user_id: true,
+          word: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          addedAt: true,
         },
-      },
-      include: {
-        word: true,
-      },
-      take: limit,
-      skip: (page - 1) * limit,
-    })
+        take: limit,
+        skip: (page - 1) * limit,
+      }),
+      this.prisma.history.count({
+        where: {
+          user_id: userId,
+          word: {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        },
+      }),
+    ])
 
     return {
-      data: wordHistory.map(PrismaWordHistoryMapper.toDomain),
+      data: userWordHistory.map(PrismaWordHistoryMapper.toDomain),
       total,
     }
   }
@@ -81,6 +65,16 @@ export class PrismaWordHistoryRepository implements WordHistoryRepository {
       where: {
         user_id: userId,
         word_id: wordId,
+      },
+      select: {
+        user_id: true,
+        word: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        addedAt: true,
       },
     })
 

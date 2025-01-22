@@ -11,7 +11,10 @@ interface RegisterUserUseCaseRequest {
   password: string
 }
 
-type RegisterUserUseCaseResponse = Either<UserAlreadyExistsError, null>
+type RegisterUserUseCaseResponse = Either<
+  UserAlreadyExistsError,
+  { user: User }
+>
 
 @Injectable()
 export class RegisterUserUseCase {
@@ -41,6 +44,6 @@ export class RegisterUserUseCase {
 
     await this.usersRepository.create(user)
 
-    return right(null)
+    return right({ user })
   }
 }

@@ -4,6 +4,7 @@ import { Either, left, right } from '@/core/either'
 import { WordsRepository } from '../repositories/words-repository'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { FavoriteAlreadyExistsError } from './errors/favorite-already-exists-error'
+import { FavoriteWord } from '../../enterprise/entities/favorite-word'
 
 interface FavoriteWordUseCaseRequest {
   userId: string
@@ -12,7 +13,9 @@ interface FavoriteWordUseCaseRequest {
 
 type FavoriteWordUseCaseResponse = Either<
   ResourceNotFoundError | FavoriteAlreadyExistsError,
-  null
+  {
+    favoriteWord: FavoriteWord
+  }
 >
 
 @Injectable()
@@ -39,13 +42,16 @@ export class FavoriteWordUseCase {
       return left(new FavoriteAlreadyExistsError(word))
     }
 
-    const favoriteWord = {
-      wordId: wordData.id,
+    const favoriteWord = FavoriteWord.create({
       userId,
-    }
+      word: {
+        id: wordData.id,
+        name: wordData.name,
+      },
+    })
 
     await this.favoriteWordsRepository.create(favoriteWord)
 
-    return right(null)
+    return right({ favoriteWord })
   }
 }
