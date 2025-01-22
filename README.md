@@ -21,6 +21,14 @@ Este é um projeto de backend desenvolvido como parte do desafio Flora. Ele util
 
 - Node.js (versão 16 ou superior)
 - PostgreSQL
+- Docker
+
+### Usando Docker
+
+1. Inicie os serviços do Docker:
+  ```sh
+    docker-compose up -d
+  ```
 
 ### Passos para Instalação
 
