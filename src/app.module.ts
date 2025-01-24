@@ -15,9 +15,6 @@ import { envSchema } from './infra/env/env'
     AuthModule,
     HttpModule,
     EnvModule,
-    // SharedModule,
-    // WordModule,
-    // UserModule,
   ],
 })
 export class AppModule {}

@@ -10,7 +10,6 @@ import { WordHistoryRepository } from '@/domain/dictionary/application/repositor
 import { PrismaWordHistoryRepository } from './prisma/repositories/prisma-word-history-repository'
 
 @Module({
-  // imports: [],
   providers: [
     PrismaService,
     { provide: UsersRepository, useClass: PrismaUsersRepository },

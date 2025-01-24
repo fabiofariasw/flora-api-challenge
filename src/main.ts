@@ -1,18 +1,14 @@
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
-// import { ValidationPipe } from '@nestjs/common'
-// import validationOptions from './utils/validation-options'
 import { EnvService } from './infra/env/env.service'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  // app.enableCors({
-  //   origin: '*',
-  // })
-
-  // app.useGlobalPipes(new ValidationPipe(validationOptions))
+  app.enableCors({
+    origin: '*',
+  })
 
   const options = new DocumentBuilder()
     .setTitle('API')
@@ -20,8 +16,6 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build()
-
-  // patchNestJsSwagger()
 
   const document = SwaggerModule.createDocument(app, options)
   SwaggerModule.setup('docs', app, document)

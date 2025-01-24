@@ -5,13 +5,4 @@ export class PrismaWordMapper {
   static toDomain(raw: PrismaWord): Word {
     return Word.create(raw)
   }
-
-  // static toPrisma(user: User): Prisma.UserUncheckedCreateInput {
-  //   return {
-  //     id: user.id.toString(),
-  //     name: user.name,
-  //     email: user.email,
-  //     password: user.password,
-  //   }
-  // }
 }
